@@ -1,14 +1,16 @@
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+nltk.download('stopwords')
+
 import json
 import csv
 import pandas as pd
 import os
 import pyterrier as pt
 import subprocess
-import nltk, re
+import nltk
+import re
 from tqdm import tqdm
-nltk.download('stopwords')
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
 
 with open('recipes.json', 'r') as file:
     data = json.load(file)
@@ -75,14 +77,15 @@ df = pd.read_csv('output.csv')
 
 java_home = subprocess.check_output(['/usr/libexec/java_home', '-v', '17']).decode('utf-8').strip()
 os.environ["JAVA_HOME"] = java_home
-os.environ["JVM_PATH"]  = java_home + "/lib/server/libjvm.dylib"
-os.environ["PATH"]      = java_home + "/bin:" + os.environ["PATH"]
+os.environ["JVM_PATH"] = java_home + "/lib/server/libjvm.dylib"
+os.environ["PATH"] = java_home + "/bin:" + os.environ["PATH"]
 
 if not pt.java.started():
     pt.java.init()
-     
+
 stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
+
 
 def clean_text(text):
     """
@@ -93,13 +96,14 @@ def clean_text(text):
     tokens = [stemmer.stem(w) for w in tokens]
     return " ".join(tokens)
 
+
 tqdm.pandas()
 df['cleaned_text'] = df['text'].progress_apply(clean_text)
 
 df.to_csv("cleaned_output.csv", index=False)
 
 index_path = os.path.expanduser("./assets/pp_index")
-os.makedirs(index_path,exist_ok=True)
+os.makedirs(index_path, exist_ok=True)
 
 corpus = (
     df[['cleaned_text']]

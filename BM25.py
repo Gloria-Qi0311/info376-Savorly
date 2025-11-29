@@ -6,6 +6,17 @@ import numpy as np
 import os, pyterrier as pt, subprocess
 import pandas as pd
 
+
+# uncomment these lines to run on a virtual venv environment. there is a strange pyterrier version mismatch
+# and these lines take care of that.
+# import ssl
+# try:
+#     _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+#     pass
+# else:
+#     ssl._create_default_https_context = _create_unverified_https_context
+
 java_home = subprocess.check_output(['/usr/libexec/java_home', '-v', '17']).decode('utf-8').strip()
 os.environ["JAVA_HOME"] = java_home
 os.environ["JVM_PATH"]  = java_home + "/lib/server/libjvm.dylib"
@@ -82,14 +93,14 @@ print(bm25_results)
 
 #     def search (self, query:str, top_k:int = 20):
 #         """
-#         Have the user enter a query, and we return a sorted list of 
+#         Have the user enter a query, and we return a sorted list of
 #         recipe results (including title, rating, recipe content, etc.).
 #         """
 #         tokens = simple_tokenize(query)
 #         scores = self.bm25.get_score(tokens) # For each recipe in the corpus, compute the BM25 relevance score.
 #         top_k = min(top_k, len(scores))
 #         top_idx = np.argsort(scores)[::-1][:top_k] # from small to big to big to small
-        
+
 #         results = []
 #         for idx in top_idx:
 #             r = self.recipes[idx]
