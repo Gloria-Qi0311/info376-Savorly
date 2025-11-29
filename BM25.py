@@ -31,7 +31,7 @@ index_ref = indexer.index(corpus.to_dict(orient="records"))
 
 index = pt.IndexFactory.of(index_ref)
 
-bm25 = pt.BatchRetrieve(index_ref, wmodel="BM25")
+bm25 = pt.BatchRetrieve(index_ref, wmodel="BM25", controls={"bm25.b": 0.75, "bm25.k_1": 1.0})
 
 search = input("Search: ")
 
