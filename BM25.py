@@ -5,13 +5,13 @@ import pandas as pd
 
 # uncomment these lines to run on a virtual venv environment. there is a strange pyterrier version mismatch
 # and these lines take care of that.
-# import ssl
-# try:
-#     _create_unverified_https_context = ssl._create_unverified_context
-# except AttributeError:
-#     pass
-# else:
-#     ssl._create_default_https_context = _create_unverified_https_context
+import ssl
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
 
 java_home = subprocess.check_output(['/usr/libexec/java_home', '-v', '17']).decode('utf-8').strip()
 os.environ["JAVA_HOME"] = java_home
