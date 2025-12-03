@@ -46,8 +46,6 @@ def normalize_embedding(df):
     df['vector_norm'] = scaler.fit_transform(df[["vector_score"]])
     return df
 
-print(normalize_embedding(embedding_scores("Kidney bean curry")))
-
 def hybrid_search(query, b=0.5):
     bm25_df = bm25_scores(query)
     bm25_df = normalize_bm25(bm25_df)
