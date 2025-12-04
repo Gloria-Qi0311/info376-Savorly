@@ -3,6 +3,13 @@ from normalize import hybrid_search
 from recommendation import Recommender
 import pandas as pd
 
+def format_recipe(text):
+    if isinstance(text, str):
+        parts = [p.strip() for p in text.split(".") if p.strip()]
+        if parts:
+            return parts[0], parts[1:]
+    return "recipe", []
+
 st.set_page_config(page_title="Savorly Search", page_icon="🍳")
 if 'recommender' not in st.session_state:
     st.session_state.recommender = Recommender()
@@ -33,12 +40,12 @@ if st.button("Search", type="primary"):
                 doc_idx = int(row['docno'])
                 try:
                     full_text = recipes_df.iloc[doc_idx]['text']
-                    display_title = full_text.split('.')[0] if isinstance(full_text, str) else "Recipe"
+                    title, body = format_recipe(full_text)
                 except:
-                    full_text = "Content not available"
-                    display_title = "Recipe Error"
-                with st.expander(f"{display_title} (Score: {row['hybrid_score']:.2f})"):
-                    st.write(full_text)
+                    title, body = "recipe error", ["Content not available"]
+                with st.expander(f"{title} (Score: {row['hybrid_score']:.2f})"):
+                    for part in body:
+                        st.write(part)
         else:
             st.write("No results found.")
 
