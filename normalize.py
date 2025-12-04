@@ -6,6 +6,13 @@ import os
 from sklearn.preprocessing import MinMaxScaler
 import embedding
 
+import ssl
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
 
 java_home = subprocess.check_output(['/usr/libexec/java_home', '-v', '17']).decode('utf-8').strip()
 os.environ["JAVA_HOME"] = java_home
@@ -52,14 +59,14 @@ def hybrid_search(query, b=0.5):
 
     vector_df = embedding_scores(query)
     vector_df = normalize_embedding(vector_df)
-    
+
     # note that we do a left join, effectively keeping all values of noramlized BM-25
     # recall that BM25 values will not appear if the query term doesn't even exist in the recipe
     # and to maintain the integrity of a 'hybrid' model, we must have some BM25 value to keep the
     # recommendations 'hybrid', otherwise the embeddings will fully take over.
     merged_df = pd.merge(bm25_df, vector_df, on="docno", how="left")
 
-    # b controls the weightage towards the final score. when b reaches 1 score relies on embedding, when 
+    # b controls the weightage towards the final score. when b reaches 1 score relies on embedding, when
     # b reaches zero score relies on bm-25. final_score = ((1 - b) * bm_25 + (vector * b))
     merged_df["hybrid_score"] = ((1-b) * merged_df['bm25_norm']) + (merged_df["vector_norm"] * b)
     return merged_df.sort_values("hybrid_score", ascending=False)
