@@ -51,6 +51,19 @@ if st.button("Search", type="primary"):
 
 with st.sidebar:
     st.header("Recommendations")
-    if st.session_state.recommender.history:
+    if hasattr(st.session_state.recommender, 'history') and st.session_state.recommender.history:
         if st.button("Retrieve Recommendations"):
             st.session_state.last_recommend = st.session_state.recommender.generate_recommendations()
+
+        if 'last_recommend' in st.session_state and not st.session_state.last_recommend.empty:
+            recs = st.session_state.last_recommend
+            for index, row in recs.iterrows():
+                doc_idx =int(row['docno'])
+                try:
+                    full_text = recipes_df.iloc[doc_idx]['text']
+                    title, body = format_recipe(full_text)
+                except:
+                    title, body = "recipe error", ["Content not available"]
+                with st.expander(title):
+                    for part in body:
+                        st.write(part)
