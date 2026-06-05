@@ -1,6 +1,5 @@
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
-nltk.download('stopwords')
 
 import json
 import csv
@@ -11,6 +10,8 @@ import subprocess
 import nltk
 import re
 from tqdm import tqdm
+
+nltk.download('stopwords')
 
 with open('recipes.json', 'r') as file:
     data = json.load(file)
@@ -62,8 +63,6 @@ for category in recipe_categories:
             text += f"{steps}. Prep Time: {prep_time} Cook Time: {cook_time}."
             text += f"\nDifficulty: {difficult}."
             recipes_array.append([recipe["id"], text])
-            if counter > 500:
-                break
 
 headers = ["id", "text"]
 
